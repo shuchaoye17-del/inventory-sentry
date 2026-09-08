@@ -533,7 +533,7 @@ git commit -m "feat: detect dangerous inventory changes"
 - Consumes: all pure analysis functions and domain types.
 - Produces: `compareShopifySkus(currentRows, shopifySkus)`, `analyzeScan(input)`, and `issueMessage(code, values)`.
 
-- [ ] **Step 1: Write Shopify comparison tests**
+- [x] **Step 1: Write Shopify comparison tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -550,13 +550,13 @@ describe('Shopify SKU comparison', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/compareShopifyExport.test.ts`
 
 Expected: FAIL because the Shopify comparison module does not exist.
 
-- [ ] **Step 3: Implement Shopify comparison**
+- [x] **Step 3: Implement Shopify comparison**
 
 Trim Shopify SKUs, ignore blanks, count exact values, report every duplicated value once, and report each non-empty supplier SKU absent from the Shopify set.
 
@@ -572,7 +572,7 @@ export function compareShopifySkus(currentRows: InventoryRow[], shopifySkus: str
 }
 ```
 
-- [ ] **Step 4: Write and implement orchestration**
+- [x] **Step 4: Write and implement orchestration**
 
 Test that `analyzeScan` combines current validation, optional prior comparison, and optional Shopify comparison; counts red/yellow issues; calculates matched rows; and calls `highestRisk`.
 
@@ -589,7 +589,7 @@ export function analyzeScan(input: AnalyzeScanInput): ScanResult;
 
 Use `crypto.randomUUID()` for `id`, `new Date().toISOString()` for `createdAt`, and fixed `issueMessage` templates for every `IssueCode`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/compareShopifyExport.test.ts src/features/inventory/analyzeScan.test.ts && pnpm lint:type`
 
