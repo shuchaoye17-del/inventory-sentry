@@ -833,7 +833,7 @@ git commit -m "feat: add local scan decisions history and exports"
 - Consumes: the complete browser workflow and bundled fixtures.
 - Produces: repeatable RED and GREEN acceptance journeys.
 
-- [ ] **Step 1: Write the RED journey**
+- [x] **Step 1: Write the RED journey**
 
 ```ts
 test('blocks a mass-zero feed and records rejection', async ({ page }) => {
@@ -854,17 +854,17 @@ test('blocks a mass-zero feed and records rejection', async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Run the RED journey and confirm failure**
+- [x] **Step 2: Run the RED journey and confirm failure**
 
 Run: `pnpm test:e2e -- --grep "blocks a mass-zero"`
 
 Expected: FAIL at the first incomplete selector or behavior.
 
-- [ ] **Step 3: Complete fixture wiring until RED passes**
+- [x] **Step 3: Complete fixture wiring until RED passes**
 
 Configure Playwright `webServer.command` as `pnpm dev --host 127.0.0.1`, use Chromium, and expose stable accessible names matching the scenario. Ensure fixture count and percentages cross both mass-zero thresholds.
 
-- [ ] **Step 4: Add the GREEN journey**
+- [x] **Step 4: Add the GREEN journey**
 
 ```ts
 test('passes a clean current feed', async ({ page }) => {
@@ -878,7 +878,7 @@ test('passes a clean current feed', async ({ page }) => {
 });
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test:e2e`
 
