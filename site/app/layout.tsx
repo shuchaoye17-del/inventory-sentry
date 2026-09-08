@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://inventory-sentry.shuchaoye17.chatgpt.site'),
   title: 'Inventory Sentry — Shopify feed safety',
   description:
     'Catch dangerous supplier inventory changes before they reach Shopify.',
