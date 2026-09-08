@@ -284,7 +284,7 @@ git commit -m "feat: define inventory risk model"
 - Consumes: `RawTable`.
 - Produces: `MAX_FILE_BYTES`, `assertSupportedFile(file, kind)`, `validateRawTable(table)`, `parseCsv(file)`, `parseXlsx(file)`, and `parseSupplierFile(file)`.
 
-- [ ] **Step 1: Write parser guard tests**
+- [x] **Step 1: Write parser guard tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -306,13 +306,13 @@ describe('inventory file parsing', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/parseFile.test.ts`
 
 Expected: FAIL because parser modules do not exist.
 
-- [ ] **Step 3: Implement guards and CSV parsing**
+- [x] **Step 3: Implement guards and CSV parsing**
 
 ```ts
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -328,7 +328,7 @@ export function validateRawTable(table: RawTable): RawTable {
 
 Use PapaParse in array-of-arrays mode with `skipEmptyLines: 'greedy'`, reject any parser error, take the first row as the untouched header row, and call `validateRawTable` before building header/value records. This detects duplicate headers before PapaParse can rename them. Keep returned cell values untouched.
 
-- [ ] **Step 4: Implement XLSX and supplier routing**
+- [x] **Step 4: Implement XLSX and supplier routing**
 
 ```ts
 export async function parseSupplierFile(file: File): Promise<RawTable> {
@@ -339,7 +339,7 @@ export async function parseSupplierFile(file: File): Promise<RawTable> {
 
 Read `await file.arrayBuffer()` with SheetJS, select `workbook.SheetNames[0]`, obtain an array-of-arrays with `header: 1`, build explicit header/value records so duplicate headers are detectable, and preserve numeric worksheet cells as numbers.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/parseFile.test.ts && pnpm lint:type`
 
