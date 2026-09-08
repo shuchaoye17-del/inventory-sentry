@@ -53,11 +53,17 @@ export function validateRawTable(input: RawTable): RawTable {
 export function tableFromGrid(grid: unknown[][]): RawTable {
   if (grid.length === 0) return validateRawTable({ headers: [], rows: [] });
 
-  const headers = grid[0].map((cell) => String(cell ?? '').trim());
+  const cellText = (cell: unknown) =>
+    typeof cell === 'string' || typeof cell === 'number'
+      ? String(cell).trim()
+      : '';
+  const isBlankCell = (cell: unknown) =>
+    cell === null ||
+    cell === undefined ||
+    (typeof cell === 'string' && cell.trim() === '');
+  const headers = grid[0].map(cellText);
   const dataRows = grid.slice(1).filter((row) =>
-    row.some(
-      (cell) => cell !== null && cell !== undefined && String(cell).trim() !== '',
-    ),
+    row.some((cell) => !isBlankCell(cell)),
   );
   const rows = dataRows.map((row) =>
     Object.fromEntries(
@@ -72,7 +78,13 @@ export function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('The file could not be read.'));
-    reader.onload = () => resolve(String(reader.result ?? ''));
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        reject(new Error('The file could not be read.'));
+        return;
+      }
+      resolve(reader.result);
+    };
     reader.readAsText(file);
   });
 }

@@ -362,7 +362,7 @@ git commit -m "feat: parse supplier csv and xlsx files"
 - Consumes: `RawTable`, `InventoryRow`, and `InventoryIssue`.
 - Produces: `mapInventoryRows(table, skuColumn, quantityColumn)` and `analyzeSingleFile(rows)`.
 
-- [ ] **Step 1: Write table-driven validation tests**
+- [x] **Step 1: Write table-driven validation tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -392,13 +392,13 @@ describe('current inventory validation', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/analyzeSingleFile.test.ts`
 
 Expected: FAIL because mapping and validation modules do not exist.
 
-- [ ] **Step 3: Implement mapping**
+- [x] **Step 3: Implement mapping**
 
 ```ts
 export function mapInventoryRows(table: RawTable, skuColumn: string, quantityColumn: string): InventoryRow[] {
@@ -421,7 +421,7 @@ export function mapInventoryRows(table: RawTable, skuColumn: string, quantityCol
 }
 ```
 
-- [ ] **Step 4: Implement deterministic issue generation**
+- [x] **Step 4: Implement deterministic issue generation**
 
 Use one row pass for SKU and quantity issues, an exact SKU frequency map for `DUPLICATE_SKU`, and a lowercase-to-original-values map for `CASE_COLLISION`. Emit one issue per affected row/SKU with fixed messages and row numbers; do not emit case collision merely because the same exact spelling repeats.
 
@@ -430,7 +430,7 @@ const isBlank = (value: unknown) => value === null || value === undefined || Str
 const isNumeric = (value: unknown) => !isBlank(value) && Number.isFinite(Number(value));
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/analyzeSingleFile.test.ts && pnpm lint:type`
 
