@@ -158,7 +158,7 @@ git commit -m "chore: scaffold inventory safety mvp"
 - Consumes: none.
 - Produces: `RawTable`, `InventoryRow`, `ParsedInventoryFile`, `InventoryIssue`, `AnalysisThresholds`, `ScanResult`, `ScanDecision`, `DEFAULT_THRESHOLDS`, and `highestRisk(issues)`.
 
-- [ ] **Step 1: Write the risk tests**
+- [x] **Step 1: Write the risk tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -178,13 +178,13 @@ describe('highestRisk', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/risk.test.ts`
 
 Expected: FAIL because `risk.ts` does not exist.
 
-- [ ] **Step 3: Define the stable domain API**
+- [x] **Step 3: Define the stable domain API**
 
 ```ts
 export type RiskLevel = 'green' | 'yellow' | 'red';
@@ -242,7 +242,7 @@ export type ScanResult = {
 export type ScanDecision = 'approved' | 'rejected' | 'undecided';
 ```
 
-- [ ] **Step 4: Implement risk defaults and aggregation**
+- [x] **Step 4: Implement risk defaults and aggregation**
 
 ```ts
 export const DEFAULT_THRESHOLDS: AnalysisThresholds = {
@@ -263,7 +263,7 @@ export function highestRisk(issues: InventoryIssue[]): RiskLevel {
 }
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/risk.test.ts && pnpm lint:type`
 
