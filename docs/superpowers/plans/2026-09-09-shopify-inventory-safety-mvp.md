@@ -902,7 +902,7 @@ git commit -m "test: cover critical supplier safety workflow"
 - Consumes: the completed application.
 - Produces: an externally testable, accessible, responsive static MVP.
 
-- [ ] **Step 1: Write polish acceptance assertions**
+- [x] **Step 1: Write polish acceptance assertions**
 
 Extend component and E2E tests to assert the local-processing privacy statement, sample-data action, loading/error states, keyboard-focusable primary actions, responsive table wrappers, and a history empty state.
 
@@ -911,13 +911,13 @@ expect(screen.getByText(/files are processed in your browser and are not uploade
 expect(screen.getByRole('button', { name: /try sample inventory/i })).toBeEnabled();
 ```
 
-- [ ] **Step 2: Run the added assertions and confirm failure**
+- [x] **Step 2: Run the added assertions and confirm failure**
 
 Run: `pnpm test && pnpm test:e2e`
 
 Expected: at least the new sample-data or polish assertions fail before implementation.
 
-- [ ] **Step 3: Apply the visual system**
+- [x] **Step 3: Apply the visual system**
 
 Use a restrained navy/slate workspace, warm off-white canvas, high-contrast white panels, indigo actions, and explicit green/amber/red risk tokens. Use a system font stack, 8 px spacing rhythm, 12–16 px radii, subtle borders instead of heavy shadows, visible `:focus-visible` rings, semantic tables, and mobile horizontal table scrolling. Do not load remote fonts or imagery.
 
@@ -931,11 +931,11 @@ Use a restrained navy/slate workspace, warm off-white canvas, high-contrast whit
 :focus-visible { outline: 3px solid #6366f1; outline-offset: 3px; }
 ```
 
-- [ ] **Step 4: Implement bundled sample loading and documentation**
+- [x] **Step 4: Implement bundled sample loading and documentation**
 
 The sample action fetches only bundled `/samples/*.csv` assets and creates local `File` objects. README sections are: Purpose, Privacy, Local setup, Commands, Static deployment, Synthetic sample flows, Risk rules, and MVP limitations. State explicitly that no Shopify connection or inventory write exists.
 
-- [ ] **Step 5: Run the complete acceptance matrix**
+- [x] **Step 5: Run the complete acceptance matrix**
 
 Run:
 
@@ -948,13 +948,13 @@ pnpm build
 
 Expected: every command exits 0. Confirm manually from test names/output that clean is GREEN; duplicate, invalid/negative, mass-zero, and qualifying large-drop are RED; schema drift, non-mass new/missing, and unknown Shopify SKU are YELLOW; decisions persist; CSV/JSON blobs contain expected fields; and no code contains `fetch` except the bundled sample loader.
 
-- [ ] **Step 6: Review privacy-sensitive code paths**
+- [x] **Step 6: Review privacy-sensitive code paths**
 
 Run: `rg -n "fetch\(|XMLHttpRequest|WebSocket|sendBeacon|localStorage|sessionStorage|idb-keyval" src`
 
 Expected: `fetch` appears only in the same-origin sample loader, browser storage appears only in `history.ts` through `idb-keyval`, and no upload-capable network API appears.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add README.md src public

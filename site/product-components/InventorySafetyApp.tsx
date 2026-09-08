@@ -8,7 +8,7 @@ import {
   RotateCcw,
   ShieldCheck,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { analyzeScan } from '@/features/inventory/analyzeScan';
@@ -38,6 +38,23 @@ import type { UploadedTable } from './types';
 
 type Screen = 'upload' | 'mapping' | 'results' | 'history';
 type FileSlot = 'current' | 'previous' | 'shopify';
+
+type WebMcpContext = {
+  registerTool: (
+    tool: {
+      name: string;
+      title: string;
+      description: string;
+      inputSchema: Record<string, unknown>;
+      annotations: {
+        readOnlyHint: boolean;
+        untrustedContentHint: boolean;
+      };
+      execute: (input: unknown) => Promise<unknown>;
+    },
+    options?: { signal?: AbortSignal },
+  ) => void | Promise<void>;
+};
 
 const EMPTY_MAPPING: ColumnMapping = { skuColumn: '', quantityColumn: '' };
 
@@ -129,7 +146,7 @@ export function InventorySafetyApp() {
     return parseCsv(file);
   };
 
-  const loadSample = async () => {
+  const loadSample = useCallback(async () => {
     setLoadingSlot('current');
     setErrors((currentErrors) => ({ ...currentErrors, current: undefined }));
     try {
@@ -141,15 +158,67 @@ export function InventorySafetyApp() {
       const table = await parseSupplierFile(file);
       setCurrent({ fileName: file.name, table });
       setCurrentMapping({ skuColumn: 'SKU', quantityColumn: 'Quantity' });
+      return true;
     } catch (error) {
       setErrors((currentErrors) => ({
         ...currentErrors,
         current: error instanceof Error ? error.message : 'The sample could not be loaded.',
       }));
+      return false;
     } finally {
       setLoadingSlot(undefined);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const context = (
+      document as Document & { modelContext?: WebMcpContext }
+    ).modelContext;
+    if (!context?.registerTool) return;
+
+    const lifecycle = new AbortController();
+    const execute = async (input: unknown) => {
+      if (
+        typeof input !== 'object' ||
+        input === null ||
+        Array.isArray(input) ||
+        Object.keys(input).length > 0
+      ) {
+        throw new Error('load_sample_inventory accepts an empty object.');
+      }
+      const loaded = await loadSample();
+      if (!loaded) throw new Error('The bundled sample could not be loaded.');
+      return { status: 'loaded', fileName: 'clean-current.csv' };
+    };
+
+    try {
+      void Promise.resolve(
+        context.registerTool(
+          {
+            name: 'load_sample_inventory',
+            title: 'Load sample inventory',
+            description:
+              'Load the bundled synthetic supplier inventory into the visible local safety-check workflow.',
+            inputSchema: {
+              type: 'object',
+              properties: {},
+              additionalProperties: false,
+            },
+            annotations: {
+              readOnlyHint: false,
+              untrustedContentHint: false,
+            },
+            execute,
+          },
+          { signal: lifecycle.signal },
+        ),
+      ).catch(() => undefined);
+    } catch {
+      // WebMCP is optional and must never block the visible workflow.
+    }
+
+    return () => lifecycle.abort();
+  }, [loadSample]);
 
   const mappingReady =
     !!current &&

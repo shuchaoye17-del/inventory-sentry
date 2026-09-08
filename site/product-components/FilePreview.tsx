@@ -23,7 +23,7 @@ export function FilePreview({ fileName, table }: FilePreviewProps) {
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{fileName}</p>
             <p className="text-xs text-muted-foreground">
-              {table.rows.length} data rows
+              {table.rows.length} data {table.rows.length === 1 ? 'row' : 'rows'}
             </p>
           </div>
         </div>
