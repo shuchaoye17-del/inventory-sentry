@@ -1,0 +1,8 @@
+.worktrees/
+outputs/
+node_modules/
+dist/
+playwright-report/
+test-results/
+coverage/
+*.log
