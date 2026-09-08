@@ -452,7 +452,7 @@ git commit -m "feat: validate supplier inventory rows"
 - Consumes: `ParsedInventoryFile`, `AnalysisThresholds`, `InventoryIssue`, and `DEFAULT_THRESHOLDS`.
 - Produces: `compareInventories(current, previous, thresholds)`.
 
-- [ ] **Step 1: Write focused threshold tests**
+- [x] **Step 1: Write focused threshold tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -480,13 +480,13 @@ describe('inventory comparison', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/compareInventories.test.ts`
 
 Expected: FAIL because the comparison module does not exist.
 
-- [ ] **Step 3: Implement per-SKU comparison**
+- [x] **Step 3: Implement per-SKU comparison**
 
 Build maps from valid, non-empty SKU rows. For prior-only SKUs emit `MISSING_SKU`; for current-only SKUs emit `NEW_SKU`; for matched SKUs emit `ZEROED_SKU`, `LARGE_DROP`, or `LARGE_INCREASE` according to the exact thresholds.
 
@@ -498,7 +498,7 @@ const crossesLargeChange = (previous: number, current: number, thresholds: Analy
 };
 ```
 
-- [ ] **Step 4: Implement aggregate escalation**
+- [x] **Step 4: Implement aggregate escalation**
 
 Calculate zeroing as matched previous-positive rows whose current quantity is zero, missing as prior-only rows, and new as current-only rows. Use the number of valid previous SKUs as the denominator for mass zeroing and mass missing, and the number of valid current SKUs as the denominator for mass new. Cross an aggregate threshold only when both count and percentage conditions are met. Emit one aggregate issue with `affectedCount`; retain individual YELLOW issues for transparent SKU-level detail.
 
@@ -507,7 +507,7 @@ const crossesMassThreshold = (count: number, denominator: number, minimumCount: 
   count >= minimumCount && denominator > 0 && count / denominator >= minimumPercent;
 ```
 
-- [ ] **Step 5: Verify all comparison categories and commit**
+- [x] **Step 5: Verify all comparison categories and commit**
 
 Add explicit cases for missing, new, zeroed, large increase, mass zero, mass missing, and mass new, then run:
 
