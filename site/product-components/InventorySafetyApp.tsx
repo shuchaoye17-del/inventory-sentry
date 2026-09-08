@@ -32,6 +32,7 @@ import {
 } from './ColumnMapper';
 import { FileDrop } from './FileDrop';
 import { FilePreview } from './FilePreview';
+import { HistoryPage } from './HistoryPage';
 import { ResultsDashboard } from './ResultsDashboard';
 import type { UploadedTable } from './types';
 
@@ -198,13 +199,7 @@ export function InventorySafetyApp() {
       <main className="min-h-screen bg-background">
         <AppHeader onHistory={() => undefined} />
         <PrivacyRail />
-        <section className="mx-auto max-w-5xl px-5 py-14 lg:px-8">
-          <Button variant="ghost" onClick={() => setScreen(current ? 'mapping' : 'upload')}>
-            <ArrowLeft aria-hidden="true" /> Back to scan
-          </Button>
-          <h1 className="mt-8 text-3xl font-semibold tracking-[-0.035em]">Scan history</h1>
-          <p className="mt-3 text-muted-foreground">No saved scan decisions yet.</p>
-        </section>
+        <HistoryPage onBack={() => setScreen(current ? 'mapping' : 'upload')} />
       </main>
     );
   }

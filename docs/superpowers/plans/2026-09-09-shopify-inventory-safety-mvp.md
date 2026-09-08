@@ -762,7 +762,7 @@ git commit -m "feat: add inventory safety results dashboard"
 - Consumes: `ScanResult` and `ScanDecision`.
 - Produces: `saveScanSummary`, `listScanSummaries`, `exportScanJson`, `exportIssuesCsv`, and decision/history UI.
 
-- [ ] **Step 1: Write report tests**
+- [x] **Step 1: Write report tests**
 
 ```ts
 it('exports JSON and a safely escaped issue CSV', async () => {
@@ -774,13 +774,13 @@ it('exports JSON and a safely escaped issue CSV', async () => {
 });
 ```
 
-- [ ] **Step 2: Run report tests and confirm failure**
+- [x] **Step 2: Run report tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/report.test.ts`
 
 Expected: FAIL because report functions do not exist.
 
-- [ ] **Step 3: Implement local blob reports**
+- [x] **Step 3: Implement local blob reports**
 
 ```ts
 export function exportScanJson(result: ScanResult): Blob {
@@ -794,7 +794,7 @@ export function exportIssuesCsv(result: ScanResult): Blob {
 }
 ```
 
-- [ ] **Step 4: Write and implement IndexedDB history tests**
+- [x] **Step 4: Write and implement IndexedDB history tests**
 
 Mock `idb-keyval` and verify `saveScanSummary` writes only `{ ...result, decision }`, never a field named `raw`, `rows`, `table`, or `file`. Verify `listScanSummaries` returns newest first.
 
@@ -805,11 +805,11 @@ export async function saveScanSummary(result: ScanResult, decision: ScanDecision
 export async function listScanSummaries(): Promise<StoredScanSummary[]>;
 ```
 
-- [ ] **Step 5: Implement actions and history page**
+- [x] **Step 5: Implement actions and history page**
 
 `ScanActions` provides Approve, Reject, Export JSON, and Export issue CSV. A decision saves the summary, exposes the selected state, and reports persistence failure without hiding results. `HistoryPage` loads summaries, shows date, filename, risk, counts, and decision, and provides a clear empty state.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/report.test.ts src/features/inventory/history.test.ts src/pages/HistoryPage.test.tsx && pnpm lint:type`
 

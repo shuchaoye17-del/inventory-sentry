@@ -14,6 +14,7 @@ import type {
 import { DiffTable } from './DiffTable';
 import { IssueTable } from './IssueTable';
 import { RiskBanner } from './RiskBanner';
+import { ScanActions } from './ScanActions';
 import { ThresholdPanel } from './ThresholdPanel';
 
 type ResultsDashboardProps = {
@@ -98,6 +99,7 @@ export function ResultsDashboard({
         <IssueTable issues={result.issues} />
         <DiffTable issues={result.issues} />
         <ThresholdPanel thresholds={thresholds} onChange={onThresholdsChange} />
+        <ScanActions result={result} />
       </div>
     </section>
   );
