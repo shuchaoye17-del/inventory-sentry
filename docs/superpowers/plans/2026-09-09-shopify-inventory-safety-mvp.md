@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-09-shopify-inventory-safety-mvp-design.md`
 
+**Application root:** `site/`. All application file paths and package commands below are relative to `site/`; repository-level design and plan documents remain under `docs/`.
+
 ## Global Constraints
 
 - Process all supplier and Shopify file contents entirely in the browser.
@@ -69,7 +71,7 @@
 - Consumes: none.
 - Produces: `App(): JSX.Element`; scripts `dev`, `build`, `test`, `test:e2e`, and `lint:type`.
 
-- [ ] **Step 1: Write the shell test**
+- [x] **Step 1: Write the shell test**
 
 ```tsx
 // src/app/App.test.tsx
@@ -87,7 +89,7 @@ describe('App', () => {
 });
 ```
 
-- [ ] **Step 2: Create configuration and install dependencies**
+- [x] **Step 2: Create configuration and install dependencies**
 
 ```json
 {
@@ -108,13 +110,13 @@ describe('App', () => {
 
 Install runtime packages with `pnpm add react react-dom papaparse xlsx zod idb-keyval` and development packages with `pnpm add -D typescript vite @vitejs/plugin-react tailwindcss @tailwindcss/vite vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @types/react @types/react-dom @types/papaparse @playwright/test`.
 
-- [ ] **Step 3: Run the shell test and confirm failure**
+- [x] **Step 3: Run the shell test and confirm failure**
 
 Run: `pnpm test -- src/app/App.test.tsx`
 
 Expected: FAIL because `src/app/App.tsx` does not exist.
 
-- [ ] **Step 4: Implement the minimal shell**
+- [x] **Step 4: Implement the minimal shell**
 
 ```tsx
 // src/app/App.tsx
@@ -132,13 +134,13 @@ export function App() {
 
 Configure Vite with React, Tailwind, and Vitest `jsdom`; import `@testing-library/jest-dom/vitest` from `src/test/setup.ts`; render `<App />` from `src/main.tsx`; include `@import "tailwindcss";` in `src/styles/index.css`.
 
-- [ ] **Step 5: Verify the harness**
+- [x] **Step 5: Verify the harness**
 
 Run: `pnpm test -- src/app/App.test.tsx && pnpm lint:type && pnpm build`
 
 Expected: all commands exit 0 and Vite writes `dist/`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add package.json pnpm-lock.yaml index.html vite.config.ts tsconfig*.json playwright.config.ts src
