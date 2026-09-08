@@ -697,7 +697,7 @@ git commit -m "feat: add file upload and column mapping"
 - Consumes: `ScanResult`, `AnalysisThresholds`, `IssueCode`, and `analyzeScan`.
 - Produces: severity/code filtering, threshold editing, and rerun behavior.
 
-- [ ] **Step 1: Write dashboard behavior tests**
+- [x] **Step 1: Write dashboard behavior tests**
 
 ```tsx
 it('shows risk, counts, explanations, and filters', async () => {
@@ -709,13 +709,13 @@ it('shows risk, counts, explanations, and filters', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/pages/ResultsPage.test.tsx`
 
 Expected: FAIL because result components do not exist.
 
-- [ ] **Step 3: Implement the risk and summary hierarchy**
+- [x] **Step 3: Implement the risk and summary hierarchy**
 
 `RiskBanner` renders a text label, icon, and fixed explanation for each risk level. `ResultsPage` renders current rows, matched rows, red issue count, yellow issue count, “Why this was flagged,” issue filters, the issue table, and a deduplicated diff table.
 
@@ -727,7 +727,7 @@ const riskCopy = {
 } as const;
 ```
 
-- [ ] **Step 4: Implement filtering and threshold reruns**
+- [x] **Step 4: Implement filtering and threshold reruns**
 
 `IssueTable` filters by `all | red | yellow` and `all | IssueCode`. `ThresholdPanel` is a native `<details>` region with percentage controls displayed as 0–100 values and converted to decimal fractions. Changing thresholds calls the page handler, which reruns `analyzeScan` against the in-memory mapped values without reparsing.
 
@@ -736,7 +736,7 @@ const percentToFraction = (value: number) => value / 100;
 const fractionToPercent = (value: number) => value * 100;
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/pages/ResultsPage.test.tsx && pnpm lint:type`
 

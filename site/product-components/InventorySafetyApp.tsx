@@ -32,6 +32,7 @@ import {
 } from './ColumnMapper';
 import { FileDrop } from './FileDrop';
 import { FilePreview } from './FilePreview';
+import { ResultsDashboard } from './ResultsDashboard';
 import type { UploadedTable } from './types';
 
 type Screen = 'upload' | 'mapping' | 'results' | 'history';
@@ -96,6 +97,7 @@ export function InventorySafetyApp() {
   const [errors, setErrors] = useState<Partial<Record<FileSlot, string>>>({});
   const [analysisError, setAnalysisError] = useState('');
   const [result, setResult] = useState<ScanResult>();
+  const [thresholds, setThresholds] = useState(DEFAULT_THRESHOLDS);
 
   const readFile = async (
     slot: FileSlot,
@@ -155,7 +157,7 @@ export function InventorySafetyApp() {
       isValidMapping(previous.table.headers, previousMapping)) &&
     (!shopify || shopify.table.headers.includes(shopifySkuColumn));
 
-  const runAnalysis = () => {
+  const runAnalysis = (activeThresholds = thresholds) => {
     if (!current || !mappingReady) return;
     setAnalysisError('');
     try {
@@ -180,7 +182,7 @@ export function InventorySafetyApp() {
           ? shopify.table.rows.map((row) => primitiveCell(row[shopifySkuColumn]))
           : undefined,
         shopifyFileName: shopify?.fileName,
-        thresholds: DEFAULT_THRESHOLDS,
+        thresholds: activeThresholds,
       });
       setResult(nextResult);
       setScreen('results');
@@ -208,24 +210,19 @@ export function InventorySafetyApp() {
   }
 
   if (screen === 'results' && result) {
-    const title = {
-      green: 'GREEN — No meaningful risk detected',
-      yellow: 'YELLOW — Review required',
-      red: 'RED — Update blocked',
-    }[result.level];
     return (
       <main className="min-h-screen bg-background">
         <AppHeader onHistory={() => setScreen('history')} />
         <PrivacyRail />
-        <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
-          <Button variant="ghost" onClick={() => setScreen('mapping')}>
-            <ArrowLeft aria-hidden="true" /> Back to inputs
-          </Button>
-          <h1 className="mt-8 text-3xl font-semibold tracking-[-0.035em]">{title}</h1>
-          <p className="mt-3 text-muted-foreground">
-            {result.issues.length} checks need attention.
-          </p>
-        </section>
+        <ResultsDashboard
+          result={result}
+          thresholds={thresholds}
+          onBack={() => setScreen('mapping')}
+          onThresholdsChange={(nextThresholds) => {
+            setThresholds(nextThresholds);
+            runAnalysis(nextThresholds);
+          }}
+        />
       </main>
     );
   }
@@ -305,7 +302,7 @@ export function InventorySafetyApp() {
             <p className="text-sm text-muted-foreground">
               {mappingReady ? 'Mappings ready. Run the local safety check.' : 'Complete every required mapping to continue.'}
             </p>
-            <Button size="lg" disabled={!mappingReady} onClick={runAnalysis}>
+            <Button size="lg" disabled={!mappingReady} onClick={() => runAnalysis()}>
               Run safety check <ArrowRight aria-hidden="true" />
             </Button>
           </div>
