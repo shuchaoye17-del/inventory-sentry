@@ -616,7 +616,7 @@ git commit -m "feat: orchestrate deterministic inventory analysis"
 - Consumes: parser, mapping, and analysis domain APIs.
 - Produces: an in-memory `ScanProvider`, upload/mapping components, and page navigation states `'upload' | 'mapping' | 'results' | 'history'`.
 
-- [ ] **Step 1: Write mapping interaction tests**
+- [x] **Step 1: Write mapping interaction tests**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
@@ -634,13 +634,13 @@ it('requires different SKU and quantity columns', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/components/ColumnMapper.test.tsx`
 
 Expected: FAIL because `ColumnMapper` does not exist.
 
-- [ ] **Step 3: Implement accessible file and mapping controls**
+- [x] **Step 3: Implement accessible file and mapping controls**
 
 ```ts
 export type ColumnMapping = { skuColumn: string; quantityColumn: string };
@@ -650,7 +650,7 @@ export const isValidMapping = (headers: string[], mapping: ColumnMapping) =>
 
 `FileDrop` uses a labeled native file input with `accept` restrictions, drag/drop enhancement, loading state, clear button, and inline errors. `FilePreview` renders filename, row count, headers, and the first five rows. `ColumnMapper` uses two labeled selects and an announced validation message.
 
-- [ ] **Step 4: Implement in-memory workflow state**
+- [x] **Step 4: Implement in-memory workflow state**
 
 ```ts
 export type UploadedTable = { fileName: string; table: RawTable };
@@ -668,13 +668,13 @@ export type ScanDraft = {
 
 Keep these values only in React state. `UploadPage` accepts the current file and sample data. `MappingPage` shows the current preview/mapping, optional previous and Shopify sections, disables analysis until all supplied mappings are valid, converts tables to mapped inventories, then calls `analyzeScan`.
 
-- [ ] **Step 5: Add workflow tests and verify**
+- [x] **Step 5: Add workflow tests and verify**
 
 Test that an invalid mapping disables “Run safety check,” a valid current mapping enables it, and a supplied optional file without its mapping keeps it disabled.
 
 Run: `pnpm test -- src/components/ColumnMapper.test.tsx src/pages/MappingPage.test.tsx && pnpm lint:type`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app src/components src/pages src/app/App.tsx
