@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-09-shopify-inventory-safety-mvp-design.md`
 
+**Application root:** `site/`. All application file paths and package commands below are relative to `site/`; repository-level design and plan documents remain under `docs/`.
+
 ## Global Constraints
 
 - Process all supplier and Shopify file contents entirely in the browser.
@@ -69,7 +71,7 @@
 - Consumes: none.
 - Produces: `App(): JSX.Element`; scripts `dev`, `build`, `test`, `test:e2e`, and `lint:type`.
 
-- [ ] **Step 1: Write the shell test**
+- [x] **Step 1: Write the shell test**
 
 ```tsx
 // src/app/App.test.tsx
@@ -87,7 +89,7 @@ describe('App', () => {
 });
 ```
 
-- [ ] **Step 2: Create configuration and install dependencies**
+- [x] **Step 2: Create configuration and install dependencies**
 
 ```json
 {
@@ -108,13 +110,13 @@ describe('App', () => {
 
 Install runtime packages with `pnpm add react react-dom papaparse xlsx zod idb-keyval` and development packages with `pnpm add -D typescript vite @vitejs/plugin-react tailwindcss @tailwindcss/vite vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @types/react @types/react-dom @types/papaparse @playwright/test`.
 
-- [ ] **Step 3: Run the shell test and confirm failure**
+- [x] **Step 3: Run the shell test and confirm failure**
 
 Run: `pnpm test -- src/app/App.test.tsx`
 
 Expected: FAIL because `src/app/App.tsx` does not exist.
 
-- [ ] **Step 4: Implement the minimal shell**
+- [x] **Step 4: Implement the minimal shell**
 
 ```tsx
 // src/app/App.tsx
@@ -132,13 +134,13 @@ export function App() {
 
 Configure Vite with React, Tailwind, and Vitest `jsdom`; import `@testing-library/jest-dom/vitest` from `src/test/setup.ts`; render `<App />` from `src/main.tsx`; include `@import "tailwindcss";` in `src/styles/index.css`.
 
-- [ ] **Step 5: Verify the harness**
+- [x] **Step 5: Verify the harness**
 
 Run: `pnpm test -- src/app/App.test.tsx && pnpm lint:type && pnpm build`
 
 Expected: all commands exit 0 and Vite writes `dist/`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add package.json pnpm-lock.yaml index.html vite.config.ts tsconfig*.json playwright.config.ts src
@@ -156,7 +158,7 @@ git commit -m "chore: scaffold inventory safety mvp"
 - Consumes: none.
 - Produces: `RawTable`, `InventoryRow`, `ParsedInventoryFile`, `InventoryIssue`, `AnalysisThresholds`, `ScanResult`, `ScanDecision`, `DEFAULT_THRESHOLDS`, and `highestRisk(issues)`.
 
-- [ ] **Step 1: Write the risk tests**
+- [x] **Step 1: Write the risk tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -176,13 +178,13 @@ describe('highestRisk', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/risk.test.ts`
 
 Expected: FAIL because `risk.ts` does not exist.
 
-- [ ] **Step 3: Define the stable domain API**
+- [x] **Step 3: Define the stable domain API**
 
 ```ts
 export type RiskLevel = 'green' | 'yellow' | 'red';
@@ -240,7 +242,7 @@ export type ScanResult = {
 export type ScanDecision = 'approved' | 'rejected' | 'undecided';
 ```
 
-- [ ] **Step 4: Implement risk defaults and aggregation**
+- [x] **Step 4: Implement risk defaults and aggregation**
 
 ```ts
 export const DEFAULT_THRESHOLDS: AnalysisThresholds = {
@@ -261,7 +263,7 @@ export function highestRisk(issues: InventoryIssue[]): RiskLevel {
 }
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/risk.test.ts && pnpm lint:type`
 
@@ -282,7 +284,7 @@ git commit -m "feat: define inventory risk model"
 - Consumes: `RawTable`.
 - Produces: `MAX_FILE_BYTES`, `assertSupportedFile(file, kind)`, `validateRawTable(table)`, `parseCsv(file)`, `parseXlsx(file)`, and `parseSupplierFile(file)`.
 
-- [ ] **Step 1: Write parser guard tests**
+- [x] **Step 1: Write parser guard tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -304,13 +306,13 @@ describe('inventory file parsing', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/parseFile.test.ts`
 
 Expected: FAIL because parser modules do not exist.
 
-- [ ] **Step 3: Implement guards and CSV parsing**
+- [x] **Step 3: Implement guards and CSV parsing**
 
 ```ts
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -326,7 +328,7 @@ export function validateRawTable(table: RawTable): RawTable {
 
 Use PapaParse in array-of-arrays mode with `skipEmptyLines: 'greedy'`, reject any parser error, take the first row as the untouched header row, and call `validateRawTable` before building header/value records. This detects duplicate headers before PapaParse can rename them. Keep returned cell values untouched.
 
-- [ ] **Step 4: Implement XLSX and supplier routing**
+- [x] **Step 4: Implement XLSX and supplier routing**
 
 ```ts
 export async function parseSupplierFile(file: File): Promise<RawTable> {
@@ -337,7 +339,7 @@ export async function parseSupplierFile(file: File): Promise<RawTable> {
 
 Read `await file.arrayBuffer()` with SheetJS, select `workbook.SheetNames[0]`, obtain an array-of-arrays with `header: 1`, build explicit header/value records so duplicate headers are detectable, and preserve numeric worksheet cells as numbers.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/parseFile.test.ts && pnpm lint:type`
 
@@ -360,7 +362,7 @@ git commit -m "feat: parse supplier csv and xlsx files"
 - Consumes: `RawTable`, `InventoryRow`, and `InventoryIssue`.
 - Produces: `mapInventoryRows(table, skuColumn, quantityColumn)` and `analyzeSingleFile(rows)`.
 
-- [ ] **Step 1: Write table-driven validation tests**
+- [x] **Step 1: Write table-driven validation tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -390,13 +392,13 @@ describe('current inventory validation', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/analyzeSingleFile.test.ts`
 
 Expected: FAIL because mapping and validation modules do not exist.
 
-- [ ] **Step 3: Implement mapping**
+- [x] **Step 3: Implement mapping**
 
 ```ts
 export function mapInventoryRows(table: RawTable, skuColumn: string, quantityColumn: string): InventoryRow[] {
@@ -419,7 +421,7 @@ export function mapInventoryRows(table: RawTable, skuColumn: string, quantityCol
 }
 ```
 
-- [ ] **Step 4: Implement deterministic issue generation**
+- [x] **Step 4: Implement deterministic issue generation**
 
 Use one row pass for SKU and quantity issues, an exact SKU frequency map for `DUPLICATE_SKU`, and a lowercase-to-original-values map for `CASE_COLLISION`. Emit one issue per affected row/SKU with fixed messages and row numbers; do not emit case collision merely because the same exact spelling repeats.
 
@@ -428,7 +430,7 @@ const isBlank = (value: unknown) => value === null || value === undefined || Str
 const isNumeric = (value: unknown) => !isBlank(value) && Number.isFinite(Number(value));
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/analyzeSingleFile.test.ts && pnpm lint:type`
 
@@ -450,7 +452,7 @@ git commit -m "feat: validate supplier inventory rows"
 - Consumes: `ParsedInventoryFile`, `AnalysisThresholds`, `InventoryIssue`, and `DEFAULT_THRESHOLDS`.
 - Produces: `compareInventories(current, previous, thresholds)`.
 
-- [ ] **Step 1: Write focused threshold tests**
+- [x] **Step 1: Write focused threshold tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -478,13 +480,13 @@ describe('inventory comparison', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/compareInventories.test.ts`
 
 Expected: FAIL because the comparison module does not exist.
 
-- [ ] **Step 3: Implement per-SKU comparison**
+- [x] **Step 3: Implement per-SKU comparison**
 
 Build maps from valid, non-empty SKU rows. For prior-only SKUs emit `MISSING_SKU`; for current-only SKUs emit `NEW_SKU`; for matched SKUs emit `ZEROED_SKU`, `LARGE_DROP`, or `LARGE_INCREASE` according to the exact thresholds.
 
@@ -496,7 +498,7 @@ const crossesLargeChange = (previous: number, current: number, thresholds: Analy
 };
 ```
 
-- [ ] **Step 4: Implement aggregate escalation**
+- [x] **Step 4: Implement aggregate escalation**
 
 Calculate zeroing as matched previous-positive rows whose current quantity is zero, missing as prior-only rows, and new as current-only rows. Use the number of valid previous SKUs as the denominator for mass zeroing and mass missing, and the number of valid current SKUs as the denominator for mass new. Cross an aggregate threshold only when both count and percentage conditions are met. Emit one aggregate issue with `affectedCount`; retain individual YELLOW issues for transparent SKU-level detail.
 
@@ -505,7 +507,7 @@ const crossesMassThreshold = (count: number, denominator: number, minimumCount: 
   count >= minimumCount && denominator > 0 && count / denominator >= minimumPercent;
 ```
 
-- [ ] **Step 5: Verify all comparison categories and commit**
+- [x] **Step 5: Verify all comparison categories and commit**
 
 Add explicit cases for missing, new, zeroed, large increase, mass zero, mass missing, and mass new, then run:
 
@@ -531,7 +533,7 @@ git commit -m "feat: detect dangerous inventory changes"
 - Consumes: all pure analysis functions and domain types.
 - Produces: `compareShopifySkus(currentRows, shopifySkus)`, `analyzeScan(input)`, and `issueMessage(code, values)`.
 
-- [ ] **Step 1: Write Shopify comparison tests**
+- [x] **Step 1: Write Shopify comparison tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -548,13 +550,13 @@ describe('Shopify SKU comparison', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/compareShopifyExport.test.ts`
 
 Expected: FAIL because the Shopify comparison module does not exist.
 
-- [ ] **Step 3: Implement Shopify comparison**
+- [x] **Step 3: Implement Shopify comparison**
 
 Trim Shopify SKUs, ignore blanks, count exact values, report every duplicated value once, and report each non-empty supplier SKU absent from the Shopify set.
 
@@ -570,7 +572,7 @@ export function compareShopifySkus(currentRows: InventoryRow[], shopifySkus: str
 }
 ```
 
-- [ ] **Step 4: Write and implement orchestration**
+- [x] **Step 4: Write and implement orchestration**
 
 Test that `analyzeScan` combines current validation, optional prior comparison, and optional Shopify comparison; counts red/yellow issues; calculates matched rows; and calls `highestRisk`.
 
@@ -587,7 +589,7 @@ export function analyzeScan(input: AnalyzeScanInput): ScanResult;
 
 Use `crypto.randomUUID()` for `id`, `new Date().toISOString()` for `createdAt`, and fixed `issueMessage` templates for every `IssueCode`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/compareShopifyExport.test.ts src/features/inventory/analyzeScan.test.ts && pnpm lint:type`
 
@@ -614,7 +616,7 @@ git commit -m "feat: orchestrate deterministic inventory analysis"
 - Consumes: parser, mapping, and analysis domain APIs.
 - Produces: an in-memory `ScanProvider`, upload/mapping components, and page navigation states `'upload' | 'mapping' | 'results' | 'history'`.
 
-- [ ] **Step 1: Write mapping interaction tests**
+- [x] **Step 1: Write mapping interaction tests**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
@@ -632,13 +634,13 @@ it('requires different SKU and quantity columns', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/components/ColumnMapper.test.tsx`
 
 Expected: FAIL because `ColumnMapper` does not exist.
 
-- [ ] **Step 3: Implement accessible file and mapping controls**
+- [x] **Step 3: Implement accessible file and mapping controls**
 
 ```ts
 export type ColumnMapping = { skuColumn: string; quantityColumn: string };
@@ -648,7 +650,7 @@ export const isValidMapping = (headers: string[], mapping: ColumnMapping) =>
 
 `FileDrop` uses a labeled native file input with `accept` restrictions, drag/drop enhancement, loading state, clear button, and inline errors. `FilePreview` renders filename, row count, headers, and the first five rows. `ColumnMapper` uses two labeled selects and an announced validation message.
 
-- [ ] **Step 4: Implement in-memory workflow state**
+- [x] **Step 4: Implement in-memory workflow state**
 
 ```ts
 export type UploadedTable = { fileName: string; table: RawTable };
@@ -666,13 +668,13 @@ export type ScanDraft = {
 
 Keep these values only in React state. `UploadPage` accepts the current file and sample data. `MappingPage` shows the current preview/mapping, optional previous and Shopify sections, disables analysis until all supplied mappings are valid, converts tables to mapped inventories, then calls `analyzeScan`.
 
-- [ ] **Step 5: Add workflow tests and verify**
+- [x] **Step 5: Add workflow tests and verify**
 
 Test that an invalid mapping disables “Run safety check,” a valid current mapping enables it, and a supplied optional file without its mapping keeps it disabled.
 
 Run: `pnpm test -- src/components/ColumnMapper.test.tsx src/pages/MappingPage.test.tsx && pnpm lint:type`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app src/components src/pages src/app/App.tsx
@@ -695,7 +697,7 @@ git commit -m "feat: add file upload and column mapping"
 - Consumes: `ScanResult`, `AnalysisThresholds`, `IssueCode`, and `analyzeScan`.
 - Produces: severity/code filtering, threshold editing, and rerun behavior.
 
-- [ ] **Step 1: Write dashboard behavior tests**
+- [x] **Step 1: Write dashboard behavior tests**
 
 ```tsx
 it('shows risk, counts, explanations, and filters', async () => {
@@ -707,13 +709,13 @@ it('shows risk, counts, explanations, and filters', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm failure**
+- [x] **Step 2: Run the test and confirm failure**
 
 Run: `pnpm test -- src/pages/ResultsPage.test.tsx`
 
 Expected: FAIL because result components do not exist.
 
-- [ ] **Step 3: Implement the risk and summary hierarchy**
+- [x] **Step 3: Implement the risk and summary hierarchy**
 
 `RiskBanner` renders a text label, icon, and fixed explanation for each risk level. `ResultsPage` renders current rows, matched rows, red issue count, yellow issue count, “Why this was flagged,” issue filters, the issue table, and a deduplicated diff table.
 
@@ -725,7 +727,7 @@ const riskCopy = {
 } as const;
 ```
 
-- [ ] **Step 4: Implement filtering and threshold reruns**
+- [x] **Step 4: Implement filtering and threshold reruns**
 
 `IssueTable` filters by `all | red | yellow` and `all | IssueCode`. `ThresholdPanel` is a native `<details>` region with percentage controls displayed as 0–100 values and converted to decimal fractions. Changing thresholds calls the page handler, which reruns `analyzeScan` against the in-memory mapped values without reparsing.
 
@@ -734,7 +736,7 @@ const percentToFraction = (value: number) => value / 100;
 const fractionToPercent = (value: number) => value * 100;
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test -- src/pages/ResultsPage.test.tsx && pnpm lint:type`
 
@@ -760,7 +762,7 @@ git commit -m "feat: add inventory safety results dashboard"
 - Consumes: `ScanResult` and `ScanDecision`.
 - Produces: `saveScanSummary`, `listScanSummaries`, `exportScanJson`, `exportIssuesCsv`, and decision/history UI.
 
-- [ ] **Step 1: Write report tests**
+- [x] **Step 1: Write report tests**
 
 ```ts
 it('exports JSON and a safely escaped issue CSV', async () => {
@@ -772,13 +774,13 @@ it('exports JSON and a safely escaped issue CSV', async () => {
 });
 ```
 
-- [ ] **Step 2: Run report tests and confirm failure**
+- [x] **Step 2: Run report tests and confirm failure**
 
 Run: `pnpm test -- src/features/inventory/report.test.ts`
 
 Expected: FAIL because report functions do not exist.
 
-- [ ] **Step 3: Implement local blob reports**
+- [x] **Step 3: Implement local blob reports**
 
 ```ts
 export function exportScanJson(result: ScanResult): Blob {
@@ -792,7 +794,7 @@ export function exportIssuesCsv(result: ScanResult): Blob {
 }
 ```
 
-- [ ] **Step 4: Write and implement IndexedDB history tests**
+- [x] **Step 4: Write and implement IndexedDB history tests**
 
 Mock `idb-keyval` and verify `saveScanSummary` writes only `{ ...result, decision }`, never a field named `raw`, `rows`, `table`, or `file`. Verify `listScanSummaries` returns newest first.
 
@@ -803,11 +805,11 @@ export async function saveScanSummary(result: ScanResult, decision: ScanDecision
 export async function listScanSummaries(): Promise<StoredScanSummary[]>;
 ```
 
-- [ ] **Step 5: Implement actions and history page**
+- [x] **Step 5: Implement actions and history page**
 
 `ScanActions` provides Approve, Reject, Export JSON, and Export issue CSV. A decision saves the summary, exposes the selected state, and reports persistence failure without hiding results. `HistoryPage` loads summaries, shows date, filename, risk, counts, and decision, and provides a clear empty state.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run: `pnpm test -- src/features/inventory/report.test.ts src/features/inventory/history.test.ts src/pages/HistoryPage.test.tsx && pnpm lint:type`
 
@@ -831,7 +833,7 @@ git commit -m "feat: add local scan decisions history and exports"
 - Consumes: the complete browser workflow and bundled fixtures.
 - Produces: repeatable RED and GREEN acceptance journeys.
 
-- [ ] **Step 1: Write the RED journey**
+- [x] **Step 1: Write the RED journey**
 
 ```ts
 test('blocks a mass-zero feed and records rejection', async ({ page }) => {
@@ -852,17 +854,17 @@ test('blocks a mass-zero feed and records rejection', async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Run the RED journey and confirm failure**
+- [x] **Step 2: Run the RED journey and confirm failure**
 
 Run: `pnpm test:e2e -- --grep "blocks a mass-zero"`
 
 Expected: FAIL at the first incomplete selector or behavior.
 
-- [ ] **Step 3: Complete fixture wiring until RED passes**
+- [x] **Step 3: Complete fixture wiring until RED passes**
 
 Configure Playwright `webServer.command` as `pnpm dev --host 127.0.0.1`, use Chromium, and expose stable accessible names matching the scenario. Ensure fixture count and percentages cross both mass-zero thresholds.
 
-- [ ] **Step 4: Add the GREEN journey**
+- [x] **Step 4: Add the GREEN journey**
 
 ```ts
 test('passes a clean current feed', async ({ page }) => {
@@ -876,7 +878,7 @@ test('passes a clean current feed', async ({ page }) => {
 });
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run: `pnpm test:e2e`
 
@@ -900,7 +902,7 @@ git commit -m "test: cover critical supplier safety workflow"
 - Consumes: the completed application.
 - Produces: an externally testable, accessible, responsive static MVP.
 
-- [ ] **Step 1: Write polish acceptance assertions**
+- [x] **Step 1: Write polish acceptance assertions**
 
 Extend component and E2E tests to assert the local-processing privacy statement, sample-data action, loading/error states, keyboard-focusable primary actions, responsive table wrappers, and a history empty state.
 
@@ -909,13 +911,13 @@ expect(screen.getByText(/files are processed in your browser and are not uploade
 expect(screen.getByRole('button', { name: /try sample inventory/i })).toBeEnabled();
 ```
 
-- [ ] **Step 2: Run the added assertions and confirm failure**
+- [x] **Step 2: Run the added assertions and confirm failure**
 
 Run: `pnpm test && pnpm test:e2e`
 
 Expected: at least the new sample-data or polish assertions fail before implementation.
 
-- [ ] **Step 3: Apply the visual system**
+- [x] **Step 3: Apply the visual system**
 
 Use a restrained navy/slate workspace, warm off-white canvas, high-contrast white panels, indigo actions, and explicit green/amber/red risk tokens. Use a system font stack, 8 px spacing rhythm, 12–16 px radii, subtle borders instead of heavy shadows, visible `:focus-visible` rings, semantic tables, and mobile horizontal table scrolling. Do not load remote fonts or imagery.
 
@@ -929,11 +931,11 @@ Use a restrained navy/slate workspace, warm off-white canvas, high-contrast whit
 :focus-visible { outline: 3px solid #6366f1; outline-offset: 3px; }
 ```
 
-- [ ] **Step 4: Implement bundled sample loading and documentation**
+- [x] **Step 4: Implement bundled sample loading and documentation**
 
 The sample action fetches only bundled `/samples/*.csv` assets and creates local `File` objects. README sections are: Purpose, Privacy, Local setup, Commands, Static deployment, Synthetic sample flows, Risk rules, and MVP limitations. State explicitly that no Shopify connection or inventory write exists.
 
-- [ ] **Step 5: Run the complete acceptance matrix**
+- [x] **Step 5: Run the complete acceptance matrix**
 
 Run:
 
@@ -946,13 +948,13 @@ pnpm build
 
 Expected: every command exits 0. Confirm manually from test names/output that clean is GREEN; duplicate, invalid/negative, mass-zero, and qualifying large-drop are RED; schema drift, non-mass new/missing, and unknown Shopify SKU are YELLOW; decisions persist; CSV/JSON blobs contain expected fields; and no code contains `fetch` except the bundled sample loader.
 
-- [ ] **Step 6: Review privacy-sensitive code paths**
+- [x] **Step 6: Review privacy-sensitive code paths**
 
 Run: `rg -n "fetch\(|XMLHttpRequest|WebSocket|sendBeacon|localStorage|sessionStorage|idb-keyval" src`
 
 Expected: `fetch` appears only in the same-origin sample loader, browser storage appears only in `history.ts` through `idb-keyval`, and no upload-capable network API appears.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add README.md src public

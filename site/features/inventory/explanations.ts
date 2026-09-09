@@ -1,0 +1,43 @@
+import type { IssueCode } from './types';
+
+export const ISSUE_TITLES: Record<IssueCode, string> = {
+  EMPTY_SKU: 'Empty SKU',
+  DUPLICATE_SKU: 'Duplicate SKU',
+  CASE_COLLISION: 'Case-only SKU collision',
+  BLANK_QUANTITY: 'Blank quantity',
+  INVALID_QUANTITY: 'Non-numeric quantity',
+  NON_INTEGER_QUANTITY: 'Non-integer quantity',
+  NEGATIVE_QUANTITY: 'Negative quantity',
+  SCHEMA_DRIFT: 'Schema drift',
+  MISSING_SKU: 'SKU disappeared',
+  NEW_SKU: 'Unexpected new SKU',
+  ZEROED_SKU: 'Stock changed to zero',
+  LARGE_DROP: 'Large quantity drop',
+  LARGE_INCREASE: 'Large quantity increase',
+  MASS_ZEROING: 'Mass zeroing',
+  MASS_MISSING: 'Large share of SKUs missing',
+  MASS_NEW: 'Large share of SKUs new',
+  UNKNOWN_SHOPIFY_SKU: 'SKU not found in Shopify',
+  DUPLICATE_SHOPIFY_SKU: 'Duplicate SKU in Shopify export',
+};
+
+export const ISSUE_RISK_REASON: Record<IssueCode, string> = {
+  EMPTY_SKU: 'A row without a SKU cannot be matched safely.',
+  DUPLICATE_SKU: 'One SKU could receive conflicting inventory values.',
+  CASE_COLLISION: 'Case differences can hide accidental duplicate products.',
+  BLANK_QUANTITY: 'A blank value has no safe inventory meaning.',
+  INVALID_QUANTITY: 'Inventory must be a numeric value.',
+  NON_INTEGER_QUANTITY: 'Shopify inventory units must be whole numbers.',
+  NEGATIVE_QUANTITY: 'Available inventory cannot be negative.',
+  SCHEMA_DRIFT: 'A changed file structure can break a saved integration.',
+  MISSING_SKU: 'A previously known item may be removed unintentionally.',
+  NEW_SKU: 'A new item should be confirmed before it is introduced.',
+  ZEROED_SKU: 'An unexpected zero can make a sellable item unavailable.',
+  LARGE_DROP: 'The decrease crosses both configured safety thresholds.',
+  LARGE_INCREASE: 'The increase may reflect a unit or supplier feed error.',
+  MASS_ZEROING: 'Many items becoming unavailable at once is likely systemic.',
+  MASS_MISSING: 'A large portion of the known catalogue disappeared.',
+  MASS_NEW: 'A large portion of the current catalogue is unfamiliar.',
+  UNKNOWN_SHOPIFY_SKU: 'This supplier row has no matching Shopify SKU.',
+  DUPLICATE_SHOPIFY_SKU: 'A supplier SKU cannot map to one Shopify item safely.',
+};
