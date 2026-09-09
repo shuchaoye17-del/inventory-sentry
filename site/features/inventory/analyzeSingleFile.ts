@@ -5,6 +5,19 @@ const isBlank = (value: unknown) =>
   value === undefined ||
   (typeof value === 'string' && value.trim() === '');
 
+const appendRow = (
+  groups: Map<string, InventoryRow[]>,
+  key: string,
+  row: InventoryRow,
+) => {
+  const existing = groups.get(key);
+  if (existing) {
+    existing.push(row);
+    return;
+  }
+  groups.set(key, [row]);
+};
+
 export function analyzeSingleFile(rows: InventoryRow[]): InventoryIssue[] {
   const issues: InventoryIssue[] = [];
   const exactSkus = new Map<string, InventoryRow[]>();
@@ -19,9 +32,9 @@ export function analyzeSingleFile(rows: InventoryRow[]): InventoryIssue[] {
         message: `Row ${row.rowNumber} has an empty SKU.`,
       });
     } else {
-      exactSkus.set(row.sku, [...(exactSkus.get(row.sku) ?? []), row]);
+      appendRow(exactSkus, row.sku, row);
       const folded = row.sku.toLocaleLowerCase();
-      foldedSkus.set(folded, [...(foldedSkus.get(folded) ?? []), row]);
+      appendRow(foldedSkus, folded, row);
     }
 
     if (isBlank(row.rawQuantity)) {

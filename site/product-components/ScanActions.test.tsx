@@ -33,4 +33,26 @@ describe('ScanActions', () => {
       expect((await listScanSummaries())[0]?.decision).toBe('rejected');
     });
   });
+
+  it('clears a saved decision when a recalculation produces a new result', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ScanActions result={result} />);
+
+    await user.click(screen.getByRole('button', { name: 'Approve scan' }));
+    expect(
+      await screen.findByText('Decision saved: approved'),
+    ).toBeInTheDocument();
+
+    rerender(
+      <ScanActions
+        result={{
+          ...result,
+          id: '22222222-2222-4222-8222-222222222222',
+          level: 'red',
+        }}
+      />,
+    );
+
+    expect(screen.queryByText(/Decision saved:/)).not.toBeInTheDocument();
+  });
 });

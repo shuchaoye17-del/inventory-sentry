@@ -18,16 +18,23 @@ const downloadBlob = (blob: Blob, fileName: string) => {
 };
 
 export function ScanActions({ result }: { result: ScanResult }) {
-  const [decision, setDecision] = useState<ScanDecision>('undecided');
+  const [savedDecision, setSavedDecision] = useState<{
+    resultId: string;
+    value: ScanDecision;
+  }>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const decision =
+    savedDecision?.resultId === result.id
+      ? savedDecision.value
+      : 'undecided';
 
   const decide = async (nextDecision: ScanDecision) => {
     setSaving(true);
     setError('');
     try {
       await saveScanSummary(result, nextDecision);
-      setDecision(nextDecision);
+      setSavedDecision({ resultId: result.id, value: nextDecision });
     } catch {
       setError('The decision could not be saved to local history.');
     } finally {

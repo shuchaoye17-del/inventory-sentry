@@ -41,4 +41,29 @@ describe('scan report exports', () => {
     expect(csv).toContain('"Review ""A,1"""');
     expect(csv).toContain('"\'=2+2"');
   });
+
+  it('neutralizes every dangerous spreadsheet formula prefix', async () => {
+    const dangerousSkus = [
+      '=2+2',
+      '+2+2',
+      '-2+2',
+      '@SUM(A1:A2)',
+      '\t=2+2',
+      '\r=2+2',
+      '\n=2+2',
+    ];
+    const csv = await exportIssuesCsv({
+      ...result,
+      issues: dangerousSkus.map((sku) => ({
+        code: 'UNKNOWN_SHOPIFY_SKU' as const,
+        level: 'yellow' as const,
+        sku,
+        message: 'Formula-like SKU',
+      })),
+    }).text();
+
+    for (const sku of dangerousSkus) {
+      expect(csv).toContain(`"'${sku}"`);
+    }
+  });
 });

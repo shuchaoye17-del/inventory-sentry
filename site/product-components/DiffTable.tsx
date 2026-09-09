@@ -1,3 +1,12 @@
+'use client';
+
+import { useState } from 'react';
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from '@/components/ui/pagination';
 import type { InventoryIssue } from '@/features/inventory/types';
 
 type DiffRow = {
@@ -6,7 +15,10 @@ type DiffRow = {
   currentQuantity?: number;
 };
 
+const PAGE_SIZE = 100;
+
 export function DiffTable({ issues }: { issues: InventoryIssue[] }) {
+  const [page, setPage] = useState(0);
   const bySku = new Map<string, DiffRow>();
   for (const issue of issues) {
     if (!issue.sku) continue;
@@ -22,6 +34,12 @@ export function DiffTable({ issues }: { issues: InventoryIssue[] }) {
       row.previousQuantity !== undefined || row.currentQuantity !== undefined,
   );
   if (rows.length === 0) return null;
+  const pageCount = Math.ceil(rows.length / PAGE_SIZE);
+  const safePage = Math.min(page, pageCount - 1);
+  const pageRows = rows.slice(
+    safePage * PAGE_SIZE,
+    (safePage + 1) * PAGE_SIZE,
+  );
 
   return (
     <section className="rounded-2xl border border-border bg-card">
@@ -39,7 +57,7 @@ export function DiffTable({ issues }: { issues: InventoryIssue[] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {pageRows.map((row) => (
               <tr key={row.sku} className="border-t border-border">
                 <td className="px-5 py-3 font-mono text-xs font-semibold sm:px-6">{row.sku}</td>
                 <td className="px-5 py-3 text-right font-mono text-xs tabular-nums">{row.previousQuantity ?? '—'}</td>
@@ -48,6 +66,42 @@ export function DiffTable({ issues }: { issues: InventoryIssue[] }) {
             ))}
           </tbody>
         </table>
+        {pageCount > 1 ? (
+          <Pagination
+            aria-label="Quantity diff pages"
+            className="flex items-center justify-end gap-3 border-t border-border px-5 py-4"
+          >
+            <PaginationContent className="gap-3">
+              <PaginationItem>
+                <button
+                  type="button"
+                  aria-label="Previous diff page"
+                  disabled={safePage === 0}
+                  className="rounded-lg border border-input px-3 py-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => setPage(safePage - 1)}
+                >
+                  Previous
+                </button>
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground">
+                  Page {safePage + 1} of {pageCount}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <button
+                  type="button"
+                  aria-label="Next diff page"
+                  disabled={safePage === pageCount - 1}
+                  className="rounded-lg border border-input px-3 py-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => setPage(safePage + 1)}
+                >
+                  Next
+                </button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        ) : null}
       </div>
     </section>
   );

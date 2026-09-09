@@ -133,4 +133,27 @@ describe('current inventory mapping and validation', () => {
 
     expect(analyzeSingleFile(rows)).toEqual([]);
   });
+
+  it('analyzes a duplicate-heavy feed without quadratic slowdown', () => {
+    const duplicateCount = 12_000;
+    const rows = Array.from({ length: duplicateCount }, (_, index) => ({
+      rowNumber: index + 2,
+      sku: 'DUPLICATE-SKU',
+      quantity: 1,
+      rawSku: 'DUPLICATE-SKU',
+      rawQuantity: 1,
+    }));
+
+    const startedAt = performance.now();
+    const issues = analyzeSingleFile(rows);
+    const elapsedMs = performance.now() - startedAt;
+
+    expect(issues).toContainEqual(
+      expect.objectContaining({
+        code: 'DUPLICATE_SKU',
+        affectedCount: duplicateCount,
+      }),
+    );
+    expect(elapsedMs).toBeLessThan(750);
+  });
 });

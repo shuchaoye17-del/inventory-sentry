@@ -11,7 +11,9 @@ const csvCell = (value: unknown) => {
     typeof value === 'string' || typeof value === 'number'
       ? String(value)
       : '';
-  if (typeof value === 'string' && /^[=+@]/.test(text)) text = `'${text}`;
+  if (typeof value === 'string' && /^[=+@\-\t\r\n]/.test(text)) {
+    text = `'${text}`;
+  }
   return `"${text.replaceAll('"', '""')}"`;
 };
 

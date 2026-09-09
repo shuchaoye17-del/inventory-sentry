@@ -99,4 +99,58 @@ describe('ResultsDashboard', () => {
       largeChangePercent: 0.9,
     });
   });
+
+  it('rejects an empty threshold and keeps the previous value', async () => {
+    const user = userEvent.setup();
+    const onThresholdsChange = vi.fn();
+    render(
+      <ResultsDashboard
+        result={redResult}
+        thresholds={DEFAULT_THRESHOLDS}
+        onThresholdsChange={onThresholdsChange}
+        onBack={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByText('Advanced thresholds'));
+    const input = screen.getByLabelText('Large change percent');
+    await user.clear(input);
+    await user.tab();
+
+    expect(onThresholdsChange).not.toHaveBeenCalled();
+    expect(input).toHaveValue(80);
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Large change percent is required.',
+    );
+  });
+
+  it.each([
+    ['Large change percent', '101', 'must be between 0 and 100'],
+    ['Large change units', '-1', 'must be at least 0'],
+    ['Large change units', '1.5', 'must be a whole number'],
+    ['Mass zero count', '1.5', 'must be a whole number'],
+  ])(
+    'rejects an invalid %s value',
+    async (label, invalidValue, expectedMessage) => {
+      const user = userEvent.setup();
+      const onThresholdsChange = vi.fn();
+      render(
+        <ResultsDashboard
+          result={redResult}
+          thresholds={DEFAULT_THRESHOLDS}
+          onThresholdsChange={onThresholdsChange}
+          onBack={vi.fn()}
+        />,
+      );
+
+      await user.click(screen.getByText('Advanced thresholds'));
+      const input = screen.getByLabelText(label);
+      await user.clear(input);
+      await user.type(input, invalidValue);
+      await user.tab();
+
+      expect(onThresholdsChange).not.toHaveBeenCalled();
+      expect(screen.getByRole('alert')).toHaveTextContent(expectedMessage);
+    },
+  );
 });

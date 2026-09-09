@@ -1,5 +1,6 @@
-import { utils, write } from 'xlsx';
 import { describe, expect, it } from 'vitest';
+
+import { TWO_SHEET_WORKBOOK_BASE64 } from '@/tests/fixtures/two-sheet-workbook';
 
 import { parseCsv } from './parseCsv';
 import {
@@ -50,24 +51,10 @@ describe('local inventory file parsing', () => {
   });
 
   it('reads only the first XLSX worksheet and keeps numeric cells numeric', async () => {
-    const workbook = utils.book_new();
-    utils.book_append_sheet(
-      workbook,
-      utils.aoa_to_sheet([
-        ['SKU', 'Qty'],
-        ['A-1', 12],
-      ]),
-      'Current',
+    const bytes = Uint8Array.from(
+      atob(TWO_SHEET_WORKBOOK_BASE64),
+      (character) => character.charCodeAt(0),
     );
-    utils.book_append_sheet(
-      workbook,
-      utils.aoa_to_sheet([
-        ['Wrong'],
-        ['ignored'],
-      ]),
-      'Ignored',
-    );
-    const bytes = write(workbook, { type: 'array', bookType: 'xlsx' });
     const file = new File([bytes], 'current.xlsx');
 
     await expect(parseXlsx(file)).resolves.toEqual({

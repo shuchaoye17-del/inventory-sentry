@@ -2,16 +2,24 @@
 
 import { useMemo, useState } from 'react';
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from '@/components/ui/pagination';
 import { ISSUE_TITLES } from '@/features/inventory/explanations';
 import type { InventoryIssue, IssueCode } from '@/features/inventory/types';
 
 type SeverityFilter = 'all' | 'red' | 'yellow';
+
+const PAGE_SIZE = 100;
 
 const quantity = (value: number | undefined) => value ?? '—';
 
 export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
   const [severity, setSeverity] = useState<SeverityFilter>('all');
   const [code, setCode] = useState<'all' | IssueCode>('all');
+  const [page, setPage] = useState(0);
   const codes = useMemo(
     () => [...new Set(issues.map((issue) => issue.code))],
     [issues],
@@ -20,6 +28,12 @@ export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
     (issue) =>
       (severity === 'all' || issue.level === severity) &&
       (code === 'all' || issue.code === code),
+  );
+  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pageIssues = visible.slice(
+    safePage * PAGE_SIZE,
+    (safePage + 1) * PAGE_SIZE,
   );
 
   return (
@@ -38,7 +52,10 @@ export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
               aria-label="Severity filter"
               className="h-9 min-w-32 rounded-lg border border-input bg-card px-3 text-sm font-normal text-foreground"
               value={severity}
-              onChange={(event) => setSeverity(event.currentTarget.value as SeverityFilter)}
+              onChange={(event) => {
+                setSeverity(event.currentTarget.value as SeverityFilter);
+                setPage(0);
+              }}
             >
               <option value="all">All severities</option>
               <option value="red">Red only</option>
@@ -51,7 +68,10 @@ export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
               aria-label="Check filter"
               className="h-9 min-w-44 rounded-lg border border-input bg-card px-3 text-sm font-normal text-foreground"
               value={code}
-              onChange={(event) => setCode(event.currentTarget.value as 'all' | IssueCode)}
+              onChange={(event) => {
+                setCode(event.currentTarget.value as 'all' | IssueCode);
+                setPage(0);
+              }}
             >
               <option value="all">All checks</option>
               {codes.map((issueCode) => (
@@ -76,7 +96,7 @@ export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
             </tr>
           </thead>
           <tbody>
-            {visible.map((issue, index) => (
+            {pageIssues.map((issue, index) => (
               <tr key={`${issue.code}-${issue.sku ?? issue.rowNumber ?? index}`} className="border-t border-border align-top">
                 <td className="px-4 py-4 sm:px-6">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-bold uppercase ${issue.level === 'red' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-900'}`}>
@@ -93,6 +113,42 @@ export function IssueTable({ issues }: { issues: InventoryIssue[] }) {
           </tbody>
         </table>
         {visible.length === 0 ? <p className="px-6 py-10 text-center text-sm text-muted-foreground">No issues match these filters.</p> : null}
+        {pageCount > 1 ? (
+          <Pagination
+            aria-label="Issue table pages"
+            className="flex items-center justify-end gap-3 border-t border-border px-5 py-4"
+          >
+            <PaginationContent className="gap-3">
+              <PaginationItem>
+                <button
+                  type="button"
+                  aria-label="Previous issue page"
+                  disabled={safePage === 0}
+                  className="rounded-lg border border-input px-3 py-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => setPage(safePage - 1)}
+                >
+                  Previous
+                </button>
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground">
+                  Page {safePage + 1} of {pageCount}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <button
+                  type="button"
+                  aria-label="Next issue page"
+                  disabled={safePage === pageCount - 1}
+                  className="rounded-lg border border-input px-3 py-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => setPage(safePage + 1)}
+                >
+                  Next
+                </button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        ) : null}
       </div>
     </section>
   );
